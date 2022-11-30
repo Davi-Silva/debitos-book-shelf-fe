@@ -8,7 +8,7 @@ import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Provider store={store}>
+    <Provider>
       <Layout>
         <Component {...pageProps} />
       </Layout>
