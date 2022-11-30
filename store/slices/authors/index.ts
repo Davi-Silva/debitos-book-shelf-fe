@@ -25,7 +25,7 @@ export const authorsSlice = createSlice({
     });
     builder.addCase(getAuthors.fulfilled, (state, { payload }) => {
       state.status = 'succeeded';
-      state.data = payload.data;
+      state.data = payload.data.results;
     });
     builder.addCase(getAuthors.rejected, (state) => {
       state.status = 'failed';

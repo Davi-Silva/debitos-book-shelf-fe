@@ -25,7 +25,7 @@ export const booksSlices = createSlice({
     });
     builder.addCase(getBooks.fulfilled, (state, { payload }) => {
       state.status = 'succeeded';
-      state.data = payload.data;
+      state.data = payload.data.results;
     });
     builder.addCase(getBooks.rejected, (state) => {
       state.status = 'failed';

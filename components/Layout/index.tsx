@@ -2,11 +2,13 @@ import React, { FC } from 'react';
 import NavigationBar from '../NavigationBar';
 import { LayoutProps } from './types';
 
+import styles from './styles.module.css';
+
 const Layout: FC<LayoutProps> = ({ children }) => {
   return (
     <>
       <NavigationBar />
-      {children}
+      <main className={styles.main}>{children}</main>
     </>
   );
 };

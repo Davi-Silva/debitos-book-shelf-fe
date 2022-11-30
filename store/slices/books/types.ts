@@ -1,7 +1,8 @@
 export type Book = {
   id: number;
+  author_id: number;
   name: string;
-  country: string;
+  isbn_no: string;
 };
 
 export type BooksState = {
