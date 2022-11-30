@@ -1,0 +1,22 @@
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+}
+
+.mainContainer {
+  width: 90%;
+  background-color: blue;
+  display: flex;
+}
+
+.brand {
+  font-size: 1.6rem;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+  width: fit-content;
+  height: fit-content;
+}

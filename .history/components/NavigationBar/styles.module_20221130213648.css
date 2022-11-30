@@ -1,0 +1,21 @@
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+}
+
+.mainContainer {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand {
+  font-size: 1.6rem;
+  width: fit-content;
+  height: fit-content;
+}

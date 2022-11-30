@@ -1,0 +1,16 @@
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mainContainer {
+  width: 90%;
+  background-color: red;
+}
+
+.brand {
+  font-size: 1.6rem;
+  text-align: ;
+}
