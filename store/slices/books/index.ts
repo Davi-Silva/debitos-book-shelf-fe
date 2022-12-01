@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BooksState } from './types';
 
 import { getBooks } from './thunks';
@@ -18,6 +18,12 @@ export const booksSlices = createSlice({
     setBooks: (state, { payload }) => {
       state.data = payload;
     },
+    filterBook: (state, { payload }: PayloadAction<string>) => {
+      const filtered = state.data.filter((book) =>
+        book.name.toLowerCase().includes(payload)
+      );
+      state.filtered = filtered;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getBooks.pending, (state) => {
@@ -26,6 +32,7 @@ export const booksSlices = createSlice({
     builder.addCase(getBooks.fulfilled, (state, { payload }) => {
       state.status = 'succeeded';
       state.data = payload.data.results;
+      state.filtered = payload.data.results;
     });
     builder.addCase(getBooks.rejected, (state) => {
       state.status = 'failed';
@@ -33,7 +40,7 @@ export const booksSlices = createSlice({
   },
 });
 
-export const { setBooks } = booksSlices.actions;
+export const { setBooks, filterBook } = booksSlices.actions;
 
 export * from './thunks';
 

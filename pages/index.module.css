@@ -1,6 +1,14 @@
 .container {
   width: 90%;
-  display: flex;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 2rem;
   margin: 0 auto;
+}
+
+@media (max-width: 850px) {
+  .container {
+    grid-template-columns: unset;
+    grid-template-rows: repeat(2, 1fr);
+  }
 }

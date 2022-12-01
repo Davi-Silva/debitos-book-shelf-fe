@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthorsState } from './types';
 
 import { getAuthors } from './thunks';
@@ -18,6 +18,12 @@ export const authorsSlice = createSlice({
     setAuthor: (state, { payload }) => {
       state.data = payload;
     },
+    filterAuthor: (state, { payload }: PayloadAction<string>) => {
+      const filtered = state.data.filter((author) =>
+        author.name.toLowerCase().includes(payload)
+      );
+      state.filtered = filtered;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAuthors.pending, (state) => {
@@ -26,6 +32,7 @@ export const authorsSlice = createSlice({
     builder.addCase(getAuthors.fulfilled, (state, { payload }) => {
       state.status = 'succeeded';
       state.data = payload.data.results;
+      state.filtered = payload.data.results;
     });
     builder.addCase(getAuthors.rejected, (state) => {
       state.status = 'failed';
@@ -33,7 +40,7 @@ export const authorsSlice = createSlice({
   },
 });
 
-export const { setAuthor } = authorsSlice.actions;
+export const { setAuthor, filterAuthor } = authorsSlice.actions;
 
 export * from './thunks';
 

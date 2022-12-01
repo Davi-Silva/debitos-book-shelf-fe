@@ -1,7 +1,8 @@
 export type SelectedToEditType = {
-  country: string;
-  name: string;
   id: number;
+  name: string;
+  isbn_no: string;
+  author_id: number;
 };
 
 export type SelectedToViewType = SelectedToEditType;

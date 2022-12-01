@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { FaTrash, FaPen } from 'react-icons/fa';
+import axios from 'axios';
 
 import { BOOK_SHELF_API_ENDPOINT } from '../../../constants/envs';
 import { useAppDispatch, useAppSelector } from '../../../store';
@@ -8,16 +9,20 @@ import { getBooks } from '../../../store/slices/books';
 import Modal from '../../Modal';
 
 import styles from './styles.module.css';
-import { SelectedToEditType } from './types';
+import { SelectedToEditType, SelectedToViewType } from './types';
 
 const AuthorsList = () => {
   const dispatch = useAppDispatch();
   const { data, status, filtered } = useAppSelector(({ authors }) => authors);
-  const isAvailable = data.length > 0 && status === 'succeeded';
+  const isAvailable = filtered.length > 0 && status === 'succeeded';
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
   const [selectedToEdit, setSelectedToEdit] = useState<
     SelectedToEditType | undefined
+  >();
+  const [selectedToView, setSelectedToView] = useState<
+    SelectedToViewType | undefined
   >();
   const [toUpdateName, setToUpdateName] = useState('');
   const [toUpdateCountry, setToUpdateCountry] = useState('');
@@ -28,18 +33,15 @@ const AuthorsList = () => {
 
   const handleDeleteItem = async (id: number) => {
     try {
-      const responseDelete = await fetch(
-        `${BOOK_SHELF_API_ENDPOINT}/authors/${id}`,
-        { method: 'DELETE' }
+      const dataDelete = await axios.delete(
+        `${BOOK_SHELF_API_ENDPOINT}/authors/${id}`
       );
-      const dataDelete = await responseDelete.json();
 
-      if (dataDelete.statusCode === 200) {
-        const responseGet = await fetch(`${BOOK_SHELF_API_ENDPOINT}/authors`);
-        const dataGet = await responseGet.json();
+      if (dataDelete.data.statusCode === 200) {
+        const dataGet = await axios.get(`${BOOK_SHELF_API_ENDPOINT}/authors`);
 
-        if (dataGet.statusCode === 200) {
-          dispatch(setAuthor(dataGet.results));
+        if (dataGet.data.statusCode === 200) {
+          dispatch(setAuthor(dataGet.data.results));
 
           dispatch(getBooks());
         }
@@ -64,18 +66,12 @@ const AuthorsList = () => {
       country: toUpdateCountry,
     };
 
-    console.log(body);
-
-    const responsePut = await fetch(
+    const dataPut = await axios.put(
       `${BOOK_SHELF_API_ENDPOINT}/authors/${selectedToEdit.id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(body),
-      }
+      body
     );
-    const dataPut = await responsePut.json();
 
-    if (dataPut.statusCode === 200) {
+    if (dataPut.data.statusCode === 200) {
       onClose();
       dispatch(getAuthors());
     }
@@ -96,8 +92,54 @@ const AuthorsList = () => {
     setToUpdateCountry(e.currentTarget.value);
   };
 
+  const onViewDetails = (state: boolean, data: SelectedToEditType) => {
+    setIsViewing(state);
+    setSelectedToView(data);
+  };
+
+  const onCloseViewModal = () => {
+    onViewDetails(false, undefined);
+  };
+
   return (
     <>
+      {isViewing && (
+        <Modal
+          title={`${selectedToView.name} Details`}
+          onClose={onCloseViewModal}
+        >
+          <div className={styles.formSection}>
+            <label htmlFor={`id-${selectedToView.id}`} className={styles.label}>
+              Id
+            </label>
+            <p id={`id-${selectedToView.id}`} className={styles.formP}>
+              {selectedToView.id}
+            </p>
+          </div>
+          <div className={styles.formSection}>
+            <label
+              htmlFor={`name-${selectedToView.id}`}
+              className={styles.label}
+            >
+              Name
+            </label>
+            <p id={`name-${selectedToView.id}`} className={styles.formP}>
+              {selectedToView.name}
+            </p>
+          </div>
+          <div className={styles.formSection}>
+            <label
+              htmlFor={`country-${selectedToView.id}`}
+              className={styles.label}
+            >
+              Country
+            </label>
+            <p id={`country-${selectedToView.id}`} className={styles.formP}>
+              {selectedToView.country}
+            </p>
+          </div>
+        </Modal>
+      )}
       {isEditing && (
         <Modal title={`Edit ${selectedToEdit.name}`} onClose={onClose}>
           <form className={styles.form} onSubmit={onSubmit}>
@@ -135,10 +177,19 @@ const AuthorsList = () => {
         </div>
         <div className={styles.list}>
           {isAvailable &&
-            data.map((author) => (
+            filtered.map((author) => (
               <div key={author.id} className={styles.row}>
                 <span className={styles.rowColumn}>
-                  <button className={styles.rowActionsButton}>
+                  <button
+                    className={styles.rowActionsButton}
+                    onClick={() =>
+                      onViewDetails(true, {
+                        country: author.country,
+                        id: author.id,
+                        name: author.name,
+                      })
+                    }
+                  >
                     {author.name}
                   </button>
                 </span>

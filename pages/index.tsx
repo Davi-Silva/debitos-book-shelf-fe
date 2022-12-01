@@ -1,13 +1,13 @@
-import BooksList from '../components/Lists/BooksList';
-import AuthorsList from '../components/Lists/AuthorsList';
+import AuthorsSection from '../components/Sections/Authors';
+import BooksSection from '../components/Sections/Books';
 
 import styles from './index.module.css';
 
 export default function Home() {
   return (
     <div className={styles.container}>
-      <BooksList />
-      <AuthorsList />
+      <AuthorsSection />
+      <BooksSection />
     </div>
   );
 }
