@@ -1,10 +1,14 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { FaTrash, FaPen } from 'react-icons/fa';
+import { FaTrash, FaPen, FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import axios from 'axios';
 
 import { BOOK_SHELF_API_ENDPOINT } from '../../../constants/envs';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { getAuthors, setAuthor } from '../../../store/slices/authors';
+import {
+  getAuthors,
+  setAuthor,
+  sortAuthors,
+} from '../../../store/slices/authors';
 import { getBooks } from '../../../store/slices/books';
 import Modal from '../../Modal';
 
@@ -26,6 +30,7 @@ const AuthorsList = () => {
   >();
   const [toUpdateName, setToUpdateName] = useState('');
   const [toUpdateCountry, setToUpdateCountry] = useState('');
+  const [sortDirection, setSortDirection] = useState(false);
 
   useEffect(() => {
     dispatch(getAuthors());
@@ -101,6 +106,14 @@ const AuthorsList = () => {
     onViewDetails(false, undefined);
   };
 
+  const onSortPress = () => {
+    setSortDirection((prev) => !prev);
+  };
+
+  useEffect(() => {
+    dispatch(sortAuthors({ sortDirection, field: 'country' }));
+  }, [dispatch, sortDirection]);
+
   return (
     <>
       {isViewing && (
@@ -168,8 +181,9 @@ const AuthorsList = () => {
           <button className={styles.listHeadItem}>
             <span className={styles.listHeadItemButton}>Name</span>
           </button>
-          <button className={styles.listHeadItem}>
+          <button className={styles.listHeadItem} onClick={onSortPress}>
             <span className={styles.listHeadItemButton}>Country</span>
+            {sortDirection ? <FaArrowDown /> : <FaArrowUp />}
           </button>
           <span className={`${styles.listHeadItem} ${styles.rowActionsHead}`}>
             <span className={styles.listHeadItemButton}>Actions</span>

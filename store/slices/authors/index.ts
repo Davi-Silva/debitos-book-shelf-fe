@@ -24,6 +24,31 @@ export const authorsSlice = createSlice({
       );
       state.filtered = filtered;
     },
+    sortAuthors: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        sortDirection: boolean;
+        field: 'country' | 'id' | 'name';
+      }>
+    ) => {
+      const sorted = state.filtered.sort((a, b) => {
+        const textA = a[payload.field] as string;
+        const textB = b[payload.field] as string;
+        const aLower = textA.toUpperCase();
+        const bLower = textB.toUpperCase();
+
+        return aLower < bLower ? -1 : aLower > bLower ? 1 : 0;
+      });
+      console.log({ sorted });
+
+      if (payload.sortDirection) {
+        state.filtered = sorted;
+      } else {
+        state.filtered = sorted.reverse();
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAuthors.pending, (state) => {
@@ -40,7 +65,7 @@ export const authorsSlice = createSlice({
   },
 });
 
-export const { setAuthor, filterAuthor } = authorsSlice.actions;
+export const { setAuthor, filterAuthor, sortAuthors } = authorsSlice.actions;
 
 export * from './thunks';
 

@@ -1,10 +1,10 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { FaTrash, FaPen } from 'react-icons/fa';
+import { FaTrash, FaPen, FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import axios from 'axios';
 
 import { BOOK_SHELF_API_ENDPOINT } from '../../../constants/envs';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { getBooks, setBooks } from '../../../store/slices/books';
+import { getBooks, setBooks, sortBooks } from '../../../store/slices/books';
 
 import styles from './styles.module.css';
 import { SelectedToEditType, SelectedToViewType } from './types';
@@ -26,6 +26,7 @@ const BooksList = () => {
   const [toUpdateName, setToUpdateName] = useState('');
   const [toUpdateISBNNo, setToUpdateISBNNo] = useState('');
   const [toUpdateAuthorId, setToUpdateAuthorId] = useState();
+  const [sortDirection, setSortDirection] = useState(false);
 
   useEffect(() => {
     dispatch(getBooks());
@@ -105,6 +106,14 @@ const BooksList = () => {
     onViewDetails(false, undefined);
   };
 
+  const onSortPress = () => {
+    setSortDirection((prev) => !prev);
+  };
+
+  useEffect(() => {
+    dispatch(sortBooks({ sortDirection, field: 'name' }));
+  }, [dispatch, sortDirection]);
+
   return (
     <>
       {isViewing && (
@@ -169,8 +178,9 @@ const BooksList = () => {
       )}
       <div className={styles.listContainer}>
         <div className={styles.listHead}>
-          <button className={styles.listHeadItem}>
+          <button className={styles.listHeadItem} onClick={onSortPress}>
             <span className={styles.listHeadItemButton}>Name</span>
+            {sortDirection ? <FaArrowDown /> : <FaArrowUp />}
           </button>
           <button className={styles.listHeadItem}>
             <span className={styles.listHeadItemButton}>ISBN No</span>
